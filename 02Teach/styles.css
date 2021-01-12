@@ -1,0 +1,8 @@
+.divs{
+    font-size: calc(.5vw + 12px);
+    background-color: lightcoral;
+}
+
+.divs:hover{
+    font-weight: bold;
+}
