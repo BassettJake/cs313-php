@@ -1,0 +1,236 @@
+/*header*/
+
+body {
+    background: #d0c1a2 url("./parchment_page.png") no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #7b2d00;
+}
+
+header {
+    background-color: #7b2d00;
+    padding: calc(5px + 1vw);
+    margin-bottom: calc(10px + 1vw);
+    height: 15vh;
+}
+
+#logo,
+#cart {
+    height: 100px;
+    display: block;
+}
+
+.headImg,
+.cartImg {
+    height: 100%;
+}
+
+.cartImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#cart {
+    float: right;
+}
+
+.cartLink {
+    height: 100px;
+    width: 100px;
+    position: relative;
+    display: flex;
+}
+
+#cartItems {
+    position: absolute;
+    font-size: 25px;
+    border-radius: 50%;
+    background-color: #7b2d00;
+    color: #d5c8ac;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    top: 36%;
+    left: 30%;
+}
+
+#pageHeader {
+    color: #d5c8ac;
+}
+
+/*home*/
+
+#alert,
+#alertSmall {
+    font-size: calc(24px + 1vw);
+    color: #7b2d00;
+    text-decoration: underline;
+}
+
+#alertSmall {
+    font-size: calc(12px + .5vw);
+}
+
+.itemForm {
+    display: grid;
+    background-color: rgba(255, 255, 255, .25);
+    padding: calc(10px + 1vw);
+}
+
+.titleArea {
+    display: flex;
+}
+
+.itemTitle {
+    font-size: calc(18px + 1vw);
+    font-weight: bold;
+    padding-top: calc(5px + .5vw);
+    padding-left: calc(5px + .5vw);
+    margin: 0;
+}
+
+.price {
+    font-size: calc(12px + .5vw);
+    padding: calc(5px + .5vw);
+    padding-top: 0;
+}
+
+.itemImage {
+    width: 100%;
+}
+
+.formInput {
+    display: grid;
+}
+
+.quantityLabel {
+    font-size: calc(12px + .5vw);
+    height: calc(12px + .5vw);
+}
+
+.quantityLabel,
+.quantity,
+.addToCartButton {
+    width: 100%;
+    margin: 0;
+    margin-top: calc(5px + .5vw);
+    padding: 0;
+    padding-left: 5%;
+}
+
+.quantity {
+    height: calc(20px + 1vw);
+    width: calc(95% - 4px);
+    border: 2px solid #7b2d00 !important;
+}
+
+.addToCartButton,
+.updateCartButton {
+    height: calc(42px + 2vw);
+    background-color: #7b2d00;
+    color: #d5c8ac;
+}
+
+.updateCartButton,
+.checkoutButton,
+.confirmPayment,
+.addressLabel {
+    margin-top: calc(5px + .5vw);
+}
+
+.addressForm {
+    display: grid;
+    width: 50%;
+    position: absolute;
+    transform: translate(-50%);
+    left: 50%;
+}
+
+.addressInput {
+    padding: 10px;
+}
+
+.checkoutButton,
+.confirmPayment {
+    height: 5vw;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #7b2d00;
+    color: #d5c8ac;
+}
+
+#items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(180px + 2vw), .25fr));
+    grid-gap: calc(10px + 1vw);
+    justify-content: center;
+    padding: calc(20px + 4vw);
+}
+
+#itemsInCart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(145px + 2vw), .25fr));
+    grid-gap: calc(10px + .5vw);
+    padding: calc(30px + 4vw);
+}
+
+#total {
+    justify-content: center;
+    display: flex;
+}
+
+#confirmationInfo {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 1vw;
+    justify-items: center;
+    padding: calc(30px + 4vw);
+    padding-bottom: 0;
+}
+
+#confirmationItemsWrapper {
+    display: grid;
+    padding: calc(10px + 1.5vw);
+    border: solid 3px;
+    justify-items: center;
+    overflow-y: auto;
+    height: calc(100vh - (100px + 12.5vw + 15vh));
+    grid-gap: calc(10px + .5vw);
+}
+
+.confirmationItems {
+    display: grid;
+    padding: calc(5px + .75vw);
+    background-color: rgba(255, 255, 255, .25);
+}
+
+#billing{
+    width: 100%;
+    text-align: center;
+}
+
+#billingTo{
+    font-size: calc(30px + 2.5vw);
+}
+
+#confirmationAddress {
+    font-size: calc(24px + 1.5vw);
+    justify-content: center;
+    display: grid;
+    max-height: 350px;
+    background-color: rgba(255, 255, 255, .25);
+    width: 100%;
+    border: solid 3px;
+}
+
+#physicalAddress {
+    font-style: normal;
+}
+
+#fullName {
+    font-size: calc(24px + 2.5vw);
+}
