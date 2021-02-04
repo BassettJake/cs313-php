@@ -1,65 +1,26 @@
 <?php
 
-try
-{
-  $dbUrl = getenv('DATABASE_URL');
+try {
+    $dbUrl = getenv('DATABASE_URL');
 
-  $dbOpts = parse_url($dbUrl);
+    $dbOpts = parse_url($dbUrl);
 
-  $dbHost = $dbOpts["host"];
-  $dbPort = $dbOpts["port"];
-  $dbUser = $dbOpts["user"];
-  $dbPassword = $dbOpts["pass"];
-  $dbName = ltrim($dbOpts["path"],'/');
+    $dbHost = $dbOpts["host"];
+    $dbPort = $dbOpts["port"];
+    $dbUser = $dbOpts["user"];
+    $dbPassword = $dbOpts["pass"];
+    $dbName = ltrim($dbOpts["path"], '/');
 
-  $db = new PDO("pgsql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPassword);
+    $db = new PDO("pgsql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPassword);
 
-  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch (PDOException $ex)
-{
-  echo 'Error!: ' . $ex->getMessage();
-  die();
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $ex) {
+    echo 'Error!: ' . $ex->getMessage();
+    die();
 }
 
-function getSpells($db){
-    $sql = 'SELECT * FROM spells ORDER BY name ASC';
-    $stmt = $db->prepare($sql);
-    $stmt->execute();
-    $spells = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $stmt->closeCursor();
-    return $spells;
-}
-
-function getEffects($db, $spellId){
-    $sql = 'SELECT * FROM effects_lists AS e WHERE e.spell_id = :spellId';
-    $stmt = $db->prepare($sql);
-    $stmt->bindValue(':spellId', $spellId, PDO::PARAM_INT);
-    $stmt->execute();
-    $effects = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $stmt->closeCursor();
-    return $effects;
-}
-
-function getDurations($db, $spellId){
-    $sql = 'SELECT * FROM durations_lists AS e WHERE e.spell_id = :spellId';
-    $stmt = $db->prepare($sql);
-    $stmt->bindValue(':spellId', $spellId, PDO::PARAM_INT);
-    $stmt->execute();
-    $durations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $stmt->closeCursor();
-    return $durations;
-}
-
-function getTargets($db, $spellId){
-    $sql = 'SELECT * FROM targets_lists AS e WHERE e.spell_id = :spellId';
-    $stmt = $db->prepare($sql);
-    $stmt->bindValue(':spellId', $spellId, PDO::PARAM_INT);
-    $stmt->execute();
-    $targets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $stmt->closeCursor();
-    return $targets;
-}
+require_once 'model/spellbuilder_model.php';
+require_once 'functions/functions.php';
 
 $action = filter_input(INPUT_POST, 'action');
 if ($action == NULL) {
@@ -67,48 +28,159 @@ if ($action == NULL) {
 }
 
 switch ($action) {
-    default:
+    case 'characters':
+
+        $characters = getCharacters($db);
+        if (count($characters) > 0) {
+
+            $searchForm = buildSearchForm();
+            $searchForm .= buildCharacterSearchForm();
+            $chars = buildCharacterView($characters);
+        } else {
+            $message = '<p class="notify">Sorry, no characters have been created.</p>';
+        }
+
+        $subHeading = "Characters";
+
+        include 'view/characters.php';
+        break;
+
+    case 'search':
+        $searchBox = filter_input(INPUT_POST, 'searchBox', FILTER_SANITIZE_STRING);
+        $type = filter_input(INPUT_POST, 'type', FILTER_SANITIZE_STRING);
+
+        if ($type == 'characters') {
+            $characters = getFilteredCharacters($db, $searchBox);
+            if (count($characters) > 0) {
+                $searchForm = buildSearchForm();
+                $searchForm .= buildCharacterSearchForm();
+                $chars = buildCharacterView($characters);
+            } else {
+                $searchForm = buildSearchForm();
+                $searchForm .= buildCharacterSearchForm();
+                $message = '<p class="notify">Sorry, no characters match that search.</p>';
+            }
+            $subHeading = "Characters";
+            include 'view/characters.php';
+        } else if ($type == 'spells') {
+            $spells = getFilteredSpells($db, $searchBox);
+            if (count($spells) > 0) {
+                $searchForm = buildSearchForm();
+                $searchForm .= buildSpellSearchForm();
+                $view = '<section class="viewWrapper">';
+                $view .= buildViewSpells($db, $spells);
+                $view .= '</section>';
+            } else {
+                $searchForm = buildSearchForm();
+                $searchForm .= buildSpellSearchForm();
+                $message = '<p class="notify">Sorry, no spells match that search.</p>';
+            }
+            $subHeading = "All Spells";
+
+            include 'view/viewSpells.php';
+        }
+
+        break;
+
+    case 'view':
+
         $spells = getSpells($db);
 
         if (count($spells) > 0) {
-            $view = '<section id="viewSpellsWrapper">';
-            foreach ($spells as $spell) {
-
-                $view .= '<section id="heading">';
-                $view .= '<h1 id="name">' . $spell['name'] . '</h1>';
-                $view .= '<section id="subheading">';
-                $view .= '<h2 id="cost">' . $spell['cost'] . '</h2>';
-                $view .= '<h3 id="castertype">' . $spell['castertype'] . '</h3>';
-                $view .= '</section>';
-                $view .= '</section>';
-                $view .= '<section id="meta">';
-                $view .= '<ul id="metaList">';
-                $view .= '<li>' . $spell['casttime'] . '</li>';
-                $view .= '<li>' . $spell['range'] . '</li>';
-
-                $effects = getEffects($db, $spell['id']);
-                foreach($effects as $effect){
-                    $view .= '<li>' . $effect['name'] . '</li>';
-                }
-
-                $durations = getDurations($db, $spell['id']);
-                foreach($durations as $duration){
-                    $view .= '<li>' . $duration['name'] . '</li>';
-                }
-                $targets = getTargets($db, $spell['id']);
-                foreach($targets as $target){
-                    $view .= '<li>' . $target['name'] . '</li>';
-                }
-                $view .= '</ul>';
-                $view .= '</section>';
-                $view .= '<p id="description">' . $spell['description'] . '</p>';
-            }
+            $searchForm = buildSearchForm();
+            $searchForm .= buildSpellSearchForm();
+            $view = '<section class="viewWrapper">';
+            $view .= buildViewSpells($db, $spells, 'view');
             $view .= '</section>';
         } else {
             $message = '<p class="notify">Sorry, no spells have been created.</p>';
         }
 
+        $subHeading = "All Spells";
 
-        include 'view/spells.php';
+        include 'view/viewSpells.php';
+        break;
+
+    case 'spellList':
+        $charId = filter_input(INPUT_GET, 'charId', FILTER_VALIDATE_INT);
+
+        //the list of spells for this character
+        $listItems = getList($db, $charId);
+        //for each spell, get that spells info
+        $spells = array();
+
+        $characters = getCharacter($db, $charId);
+        $charName = "";
+        foreach ($characters as $character) {
+            $charName = $character['name'];
+        }
+        $spellList = '<section class="topSpellButton">';
+        $spellList .= '<button class="button goldButton" onclick="window.location.href=';
+        $spellList .= "'/Spellbuilder/index.php?action=addToList&charId=". $charId . "';";
+        $spellList .= '">Add Spells</button>';
+        $spellList .= '</section>';
+        $spellList .= '<section class="viewWrapper">';
+        if (count($listItems) > 0) {
+            foreach ($listItems as $listItem) {
+                $spells = getListSpells($db, $listItem['spell_id']);
+                if (count($spells) > 0) {
+                    $spellList .= buildViewSpells($db, $spells, 'spellList');
+                } else {
+                    $message = '<p class="notify">Sorry, no spells have been added to ' . $charName . '\'s Spell List.</p>';
+                }
+            }
+        } else {
+            $message = '<p class="notify">Sorry, no spells have been added to ' . $charName . '\'s Spell List.</p>';
+        }
+        $spellList .= '</section>';
+
+        $subHeading = $charName . "'s Spells";
+        include 'view/viewCharacterList.php';
+        break;
+
+    case 'create':
+        $create = buildCreateSpell();
+        $subHeading = "Create a Spell";
+        include 'view/create.php';
+        break;
+    
+    case 'addToList':
+        $charId = filter_input(INPUT_GET, 'charId', FILTER_VALIDATE_INT);
+
+        //the list of spells for this character
+        $listItems = getList($db, $charId);
+        //for each spell, get that spells info
+        $spells = array();
+
+        $characters = getCharacter($db, $charId);
+        $charName = "";
+        foreach ($characters as $character) {
+            $charName = $character['name'];
+        }
+        $missingSpells = '<section class="topSpellButton">';
+        $missingSpells .= '<button class="button goldButton" onclick="window.location.href=';
+        $missingSpells .= "'/Spellbuilder/index.php?action=spellList&charId=". $charId . "';";
+        $missingSpells .= '">Back to ' . $charName . '\'s Spells</button>';
+        $missingSpells .= '</section>';
+        $missingSpells .= '<section class="viewWrapper">';
+        if (count($listItems) > 0) {
+            $spells = getMissingListSpells($db, $listItems);
+            if (count($spells) > 0) {
+                $missingSpells .= buildViewSpells($db, $spells, 'addToList');
+            } else {
+                $message = '<p class="notify">Sorry, no spells remain to be added to ' . $charName . '\'s Spell List.</p>';
+            }
+        } else {
+            $message = '<p class="notify">Sorry, no spells remain to be added to ' . $charName . '\'s Spell List.</p>';
+        }
+        $missingSpells .= '</section>';
+
+        $subHeading = "Add to " . $charName . "'s Spells";
+        include 'view/addSpellList.php';
+        break;
+
+        default:
+        $subHeading = "Home";
+        include 'view/home.php';
 }
-
+?>

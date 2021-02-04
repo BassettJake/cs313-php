@@ -1,0 +1,315 @@
+* {
+    box-sizing: border-box;
+}
+
+input,
+button {
+    padding: 0;
+    font-family: unset;
+}
+
+/* metamorphous-regular - latin */
+@font-face {
+    font-family: 'Metamorphous';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/metamorphous-v11-latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local(''),
+        url('../fonts/metamorphous-v11-latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/metamorphous-v11-latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/metamorphous-v11-latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/metamorphous-v11-latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/metamorphous-v11-latin-regular.svg#Metamorphous') format('svg');
+    /* Legacy iOS */
+}
+
+
+body {
+    background-color: rgb(28, 28, 28);
+    font-family: 'Metamorphous', cursive;
+}
+
+#titleWrapper {
+    position: relative;
+}
+
+#headTitle {
+    color: rgb(255, 215, 0);
+    font-size: calc(12px + 4vw);
+}
+
+#headTitle,
+#foot {
+    text-align: center;
+}
+
+#subHeading {
+    color: rgb(255, 215, 0);
+    font-size: calc(12px + .5vw);
+    position: absolute;
+    top: 65%;
+    left: 55%;
+}
+
+hr {
+    background-color: #808080;
+    border: 0 none;
+    color: #808080;
+    height: calc(1px + .1vw);
+}
+
+#faintHr {
+    background-color: #383838;
+    color: #383838;
+}
+
+#copyR {
+    text-align: center;
+    color: #808080;
+}
+
+main,
+#homeNav {
+    display: grid;
+}
+
+#homeNav {
+    justify-content: center;
+}
+
+.button {
+    width: 100%;
+    padding-top: 16.5%;
+    padding-bottom: 16.5%;
+    font-size: calc(12px + 1vw);
+    font-weight: bold;
+    border: calc(1px + .1vw) solid #808080;
+    color: rgb(255, 215, 0);
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    line-height: 0;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: rgb(255, 215, 0);
+}
+
+.greyButton {
+    background: url("../assets/greyButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.goldButton,
+.typeButton:hover {
+    background: url("../assets/goldButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.blueButton,
+.castButton:hover {
+    background: url("../assets/blueButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.redButton,
+.effectButton:hover {
+    background: url("../assets/redButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.tealButton,
+.durationButton:hover {
+    background: url("../assets/tealButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.greenButton,
+.targetButton:hover {
+    background: url("../assets/greenButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.orangeButton,
+.rangeButton:hover {
+    background: url("../assets/orangeButton.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.createWrapper {
+    display: grid;
+    justify-content: center;
+    margin: auto;
+    margin-bottom: 60%;
+}
+
+.top {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-gap: .5vw;
+    margin-bottom: .5vw;
+    height: 15vw;
+}
+
+.mid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-gap: .5vw;
+    height: 15vw;
+}
+
+.mid .dropDown {
+    margin-bottom: 8vw;
+}
+
+.dropButton {
+    position: relative;
+}
+
+.dropDown {
+    display: none;
+    position: absolute;
+    top: 8vw;
+    left: 0;
+    background-color: #383838;
+}
+
+.dropButton:hover .dropDown {
+    display: grid;
+    grid-gap: .2vw;
+    z-index: 10;
+    width: 100%;
+}
+
+.viewWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1vw;
+}
+
+.viewSpellsWrapper {
+    margin: 0 auto;
+    width: 90%;
+    color: #ffd700;
+    border: calc(1px + .1vw) solid #808080;
+    padding: calc(1px + .4vw);
+}
+
+.heading {
+    display: grid;
+    grid-template-columns: 1.5fr .5fr;
+    grid-column-gap: .5vw;
+    background-color: #383838;
+    padding-right: .5vw;
+    padding-left: .5vw;
+    margin-bottom: .5vw;
+    border-bottom: calc(1px + .1vw) solid #808080;
+    font-size: calc(12px + 1.5vw);
+}
+
+.subheading {
+    font-size: calc(12px + 1vw);
+}
+
+.meta {
+    border-bottom: calc(1px + .1vw) solid #808080;
+}
+
+.metaList {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: calc(12px + .5vw);
+    grid-gap: .5vw;
+}
+
+.metaList li {
+    padding: calc(1px + .4vw);
+}
+
+.description,
+.notify {
+    font-size: calc(12px + 1vw);
+}
+
+.viewWrapperChar {
+    justify-content: center;
+    display: grid;
+}
+
+.charTable {
+    min-width: 70vw;
+}
+
+.charTable,
+.listLink,
+.notify {
+    color: #ffd700;
+}
+
+.tableHeader,
+.notify {
+    font-size: calc(12px + 1vw);
+}
+
+.tableRow {
+    text-align: left;
+    border-bottom: calc(1px + .1vw) solid rgb(255, 215, 0);
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    font-size: calc(12px + .5vw);
+    align-items: center;
+    padding: 0 calc(10px + 2vw) 0 calc(10px + 2vw);
+}
+
+.listLink {
+    text-decoration: underline;
+}
+
+footer {
+    margin-top: calc(12px + 2.5vw);
+}
+
+#searchWrapper {
+    display: grid;
+    justify-content: center;
+}
+
+.searchForm {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-gap: .5vw;
+    width: 100%;
+    margin-top: calc(12px + .5vw);
+    margin-bottom: calc(12px + .5vw);
+}
+
+.charForm {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: .5vw;
+    width: 50%;
+    justify-self: center;
+    margin-top: calc(12px + 2.5vw);
+}
+
+.inputField {
+    background-color: #808080;
+    color: rgb(255, 215, 0);
+}
+
+.topSpellButton,.spellButton {
+    justify-content: center;
+    display: grid;
+    margin-bottom: calc(12px + .5vw);
+}
+
