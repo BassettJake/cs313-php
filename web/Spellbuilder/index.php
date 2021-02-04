@@ -14,6 +14,8 @@ try {
     $db = new PDO("pgsql:host=$dbHost;port=$dbPort;dbname=$dbName", $dbUser, $dbPassword);
 
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    session_start();
 } catch (PDOException $ex) {
     echo 'Error!: ' . $ex->getMessage();
     die();
@@ -68,7 +70,7 @@ switch ($action) {
                 $searchForm = buildSearchForm();
                 $searchForm .= buildSpellSearchForm();
                 $view = '<section class="viewWrapper">';
-                $view .= buildViewSpells($db, $spells);
+                $view .= buildViewSpells($db, $spells, 'view');
                 $view .= '</section>';
             } else {
                 $searchForm = buildSearchForm();
