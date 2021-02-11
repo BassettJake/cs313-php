@@ -100,7 +100,9 @@ function buildCharacterView($characters){
     $chars .= '</section>';
     $chars .= '</section>';
     $chars .= '<form class="charForm" action="../Spellbuilder/index.php" method="post">';
-    $chars .= '<input type="text" class="inputField" name="inputField" value="" placeholder="Name">';
+    $chars .= '<input type="text" class="inputField" name="inputField" value="';
+     if(isset($charName)){$chars .= $charName;}
+     $chars .= '" placeholder="Name">';
     $chars .= '<input type="submit" class="button goldButton buttonSmallText" name="submit" value="Create Character">';
     $chars .= '<input type="hidden" name="action" value="createCharacter">';
     $chars .= '</form>';

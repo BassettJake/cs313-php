@@ -184,7 +184,7 @@ switch ($action) {
         $spellEffectInfo = explode(' * ', $spellEffectInfo[0]['name']);
         $spellEffectInfo = array_slice($spellEffectInfo, 0, 2);
         $spellEffect = $spellEffectInfo[0];
-        $spellMulti = $spellEffectInfo[1] / 8;
+        $spellMulti = $spellEffectInfo[1];
 
         $name = $spellInfo[0]['name'];
         $desc = $spellInfo[0]['description'];
@@ -251,9 +251,20 @@ switch ($action) {
             $message = '<p class="notify">Character name cannot be blank.</p>';
         }
         else{
-            $success = createCharacter($db, $charName);
-            if(!($success === 1)){
-                $message = '<p class="notify">Error, ' . $charName . ' was not added.</p>';
+
+            $checkExisting = checkCharactersByName($db, $charName);
+            if(!($checkExisting === 0)){
+                $message = '<p class="notify">Error, a character with this name already exists.</p>';
+            }
+            else{
+                $success = createCharacter($db, $charName);
+                if(!($success === 1)){
+                    $message = '<p class="notify">Error, ' . $charName . ' was not added.</p>';
+                }
+                else{
+                    $message = '<p class="notify">' . $charName . ' was added!</p>';
+                    unset($charName);
+                }
             }
         }
 
@@ -281,7 +292,7 @@ switch ($action) {
         $range = filter_input(INPUT_POST, 'range', FILTER_SANITIZE_STRING);
         $multi = filter_input(INPUT_POST, 'multi', FILTER_SANITIZE_STRING);
 
-        if((empty($name) || empty($desc) || empty($casterType) || empty($castTime) || empty($cost) || 
+        if((empty($name) || empty($desc) || empty($casterType) || empty($castTime) || (empty($cost) && $cost != 0) || 
         empty($effects) || empty($durations) || empty($targets) || empty($range)) 
             || 
             (($effects == "Damage" || $effects == "Healing")) 
@@ -292,39 +303,46 @@ switch ($action) {
         }
         else{
 
+            $checkExisting = checkSpellsByName($db, $name);
+            if(!($checkExisting === 0)){
+                $message = '<p class="notify">Error, a spell with this name already exists.</p>';
+            }
+            else{
+
             $success = createSpell($db, $name, $desc, $castTime, $casterType, $cost, $range);
 
             if(!($success === 1)){
                 $message = '<p class="notify">Error, ' . $name . ' was not added.</p>';
             }
             else{
-                $spellId = getLastSpellId($db);
-                if(count($spellId) == 1){
-                    $spellId = array_slice($spellId, 0, 1);
-                    $spellId = $spellId[0]['id'];
-                    $success = "";
-                    if(empty($multi)){
-                        $success = createEffects($db, $spellId, $effects);
-                    }
-                    else{
-                        $success = createEffects($db, $spellId, ($effects . ' * ' . $multi));
-                    }
-                    if(!($success === 1)){
-                        $message = '<p class="notify">Error, ' . $name . ' effect was not added.</p>';
-                    }
-                    else{
-                        $success = createDurations($db, $spellId, $durations);
-                        if(!($success === 1)){
-                            $message = '<p class="notify">Error, ' . $name . ' duration was not added.</p>';
+                    $spellId = getLastSpellId($db);
+                    if(count($spellId) == 1){
+                        $spellId = array_slice($spellId, 0, 1);
+                        $spellId = $spellId[0]['id'];
+                        $success = "";
+                        if(empty($multi)){
+                            $success = createEffects($db, $spellId, $effects);
                         }
                         else{
-                            $success = createTargets($db, $spellId, $targets);
+                            $success = createEffects($db, $spellId, ($effects . ' * ' . $multi));
+                        }
+                        if(!($success === 1)){
+                            $message = '<p class="notify">Error, ' . $name . ' effect was not added.</p>';
+                        }
+                        else{
+                            $success = createDurations($db, $spellId, $durations);
                             if(!($success === 1)){
-                                $message = '<p class="notify">Error, ' . $name . ' target was not added.</p>';
+                                $message = '<p class="notify">Error, ' . $name . ' duration was not added.</p>';
                             }
                             else{
-                                $message = '<p class="notify">Spell created!</p>';
-                                unset($name, $desc, $casterType, $cost, $castTime, $effects, $durations,$targets,$range,$multi);
+                                $success = createTargets($db, $spellId, $targets);
+                                if(!($success === 1)){
+                                    $message = '<p class="notify">Error, ' . $name . ' target was not added.</p>';
+                                }
+                                else{
+                                    $message = '<p class="notify">Spell created!</p>';
+                                    unset($name, $desc, $casterType, $cost, $castTime, $effects, $durations,$targets,$range,$multi);
+                                }
                             }
                         }
                     }
@@ -542,8 +560,8 @@ switch ($action) {
         $targets = filter_input(INPUT_POST, 'targets', FILTER_SANITIZE_STRING);
         $range = filter_input(INPUT_POST, 'range', FILTER_SANITIZE_STRING);
         $multi = filter_input(INPUT_POST, 'multi', FILTER_SANITIZE_STRING);
-
-        if((empty($name) || empty($desc) || empty($casterType) || empty($castTime) || empty($cost) || 
+        $edit = '<input type="hidden" name="id" value="' . $spellId . '">';
+        if((empty($name) || empty($desc) || empty($casterType) || empty($castTime) || (empty($cost) && $cost != 0) || 
         empty($effects) || empty($durations) || empty($targets) || empty($range)) 
             || 
             (($effects == "Damage" || $effects == "Healing")) 
@@ -553,36 +571,43 @@ switch ($action) {
             $message = buildSpellMessage($name, $desc, $casterType, $cost, $castTime, $effects, $durations,$targets,$range,$multi);
         }
         else{
-
-            $success = editSpell($db, $spellId, $name, $desc, $castTime, $casterType, $cost, $range);
-
-            if(!($success === 1)){
-                $message = '<p class="notify">Error, ' . $name . ' was not edited.</p>';
+            $checkExisting = checkSpellsByNameAndId($db, $name, $spellId);
+            if(!($checkExisting === 0)){
+                $message = '<p class="notify">Error, a different spell with this name already exists.</p>';
             }
             else{
-                $success = "";
-                if(empty($multi)){
-                    $success = editEffects($db, $spellId, $effects);
-                }
-                else{
-                    $success = editEffects($db, $spellId, ($effects . ' * ' . $multi));
-                }
-                
+
+                $success = editSpell($db, $spellId, $name, $desc, $castTime, $casterType, $cost, $range);
+
                 if(!($success === 1)){
                     $message = '<p class="notify">Error, ' . $name . ' was not edited.</p>';
                 }
                 else{
-                    $success = editDurations($db, $spellId, $durations);
+                    $success = "";
+                    if(empty($multi)){
+                        $success = editEffects($db, $spellId, $effects);
+                    }
+                    else{
+                        $success = editEffects($db, $spellId, ($effects . ' * ' . $multi));
+                    }
+                    
                     if(!($success === 1)){
                         $message = '<p class="notify">Error, ' . $name . ' was not edited.</p>';
                     }
                     else{
-                        $success = editTargets($db, $spellId, $targets);
+                        $success = editDurations($db, $spellId, $durations);
                         if(!($success === 1)){
                             $message = '<p class="notify">Error, ' . $name . ' was not edited.</p>';
                         }
                         else{
-                            $message = '<p class="notify">Spell edited!</p>';
+                            $success = editTargets($db, $spellId, $targets);
+                            if(!($success === 1)){
+                                $message = '<p class="notify">Error, ' . $name . ' was not edited.</p>';
+                            }
+                            else{
+                                $message = '<p class="notify">Spell edited!</p>';
+                                unset($name, $desc, $casterType, $cost, $castTime, $effects, $durations,$targets,$range,$multi, $edit);
+                            }
                         }
                     }
                 }

@@ -324,4 +324,37 @@ function editTargets($db, $spellId, $val){
     $stmt->closeCursor();
     return $rows;
 }
+
+function checkSpellsByName($db, $name){
+    $sql = 'SELECT * FROM spells WHERE name = :name';
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->execute();
+    $rows = $stmt->rowCount();
+    $stmt->closeCursor();
+    return $rows;
+}
+
+function checkSpellsByNameAndId($db, $name, $spellId){
+    $sql = 'SELECT * FROM spells WHERE name = :name AND id != :spellId';
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->bindValue(':spellId', $spellId, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows = $stmt->rowCount();
+    $stmt->closeCursor();
+    return $rows;
+}
+
+
+
+function checkCharactersByName($db, $charName){
+    $sql = 'SELECT * FROM characters WHERE name = :charName';
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':charName', $charName, PDO::PARAM_STR);
+    $stmt->execute();
+    $rows = $stmt->rowCount();
+    $stmt->closeCursor();
+    return $rows;
+}
 ?>
