@@ -17,15 +17,16 @@
     </header>
     <main>
         <?php
+                if (isset($message)) {
+                    echo $message;
+                }
         if (isset($searchForm)) {
             echo $searchForm;
         }
         if (isset($view)) {
             echo $view;
         }
-        if (isset($message)) {
-            echo $message;
-        }
+
         ?>
 
     </main>

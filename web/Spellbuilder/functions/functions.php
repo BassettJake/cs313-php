@@ -42,6 +42,16 @@ function buildViewSpells($db, $spells, $page){
         $view .= '</section>';
         $view .= '<p class="description">' . $spell['description'] . '</p>';
 
+        if($page == "view"){
+            $view .= '<section class="spellButton">';
+            $view .= '<form class="spellButtonForm" action="../Spellbuilder/index.php" method="post">';
+            $view .= '<input type="submit" class="button goldButton" name="submit" value="Edit Spell">';
+            $view .= '<input type="hidden" name="action" value="editSpell">';
+            $view .= '<input type="hidden" name="id" value="' . $spell['id'] . '">';
+            $view .= '</form>';
+            $view .= '</section>';
+        }
+
         $view .= '<section class="spellButton">';
         $view .= '<form class="spellButtonForm" action="../Spellbuilder/index.php" method="post">';
         if($page == "view"){
@@ -52,12 +62,12 @@ function buildViewSpells($db, $spells, $page){
         else if($page == "spellList"){
             $view .= '<input type="submit" class="button goldButton" name="submit" value="Remove Spell">';
             $view .= '<input type="hidden" name="action" value="removeSpell">';
-            $view .= '<input type="hidden" name="id" value="' . $spell['id'] . '">';
+            $view .= '<input type="hidden" value="' . $spell['id'] . '" name="id">';
         }
         else if($page == "addToList"){
             $view .= '<input type="submit" class="button goldButton" name="submit" value="Add Spell">';
             $view .= '<input type="hidden" name="action" value="addSpell">';
-            $view .= '<input type="hidden" name="id" value="' . $spell['id'] . '">';
+            $view .= '<input type="hidden" value="' . $spell['id'] . '" name="id">';
         }
 
         $view .= '</form>';
@@ -82,13 +92,16 @@ function buildCharacterView($characters){
         $chars .= '<section class="viewList">';
         $chars .= '<div class="listLink"><a href="/Spellbuilder/index.php?action=spellList&charId=' . $character['id'] . '">View Spell List</a></div>';
         $chars .= '</section>';
+        $chars .= '<section class="delChar">';
+        $chars .= '<div class="listLink"><a href="/Spellbuilder/index.php?action=deleteCharacter&charName=' . $character['name'] . '">Delete Character</a></div>';
+        $chars .= '</section>';
         $chars .= '</section>';
     }
     $chars .= '</section>';
     $chars .= '</section>';
     $chars .= '<form class="charForm" action="../Spellbuilder/index.php" method="post">';
     $chars .= '<input type="text" class="inputField" name="inputField" value="" placeholder="Name">';
-    $chars .= '<input type="submit" class="button goldButton" name="submit" value="Create Character">';
+    $chars .= '<input type="submit" class="button goldButton buttonSmallText" name="submit" value="Create Character">';
     $chars .= '<input type="hidden" name="action" value="createCharacter">';
     $chars .= '</form>';
 
@@ -128,113 +141,41 @@ function buildSpellSearchForm(){
     return $searchForm;
 }
 
-function buildCreateSpell(){
-    $create = '<section class="createWrapper">' .
-
-    '<section class="top">' .
-    '<section class="dropButton">' .
-    '<section class="button goldButton selectCaster">Caster Type' .
-    '<section class="dropDown">' .
-    '<button type="button" class="button greyButton typeButton" value="full">Full Caster</button>' . 
-    '<button type="button" class="button greyButton typeButton" value="half">Half Caster</button>' . 
-    '<button type="button" class="button greyButton typeButton" value="melee">Melee Caster</button>' . 
-    '</section>' . 
-    '</section>' . 
-    '</section>' . 
-
-    '<section class="selectCreate">' .
-    '<form class="createForm" action="../Spellbuilder/index.php?createSpell" method="post">' .
-    '<input type="hidden" id="name" name="name" value="">' .
-    '<input type="hidden" id="desc" name="desc" value="">' .
-    '<input type="hidden" id="casterType" name="casterType" value="">' .
-    '<input type="hidden" id="cost" name="cost" value="">' .
-    '<input type="hidden" id="casttime" name="casttime" value="">' .
-    '<input type="hidden" id="effects" name="effects" value="">' .
-    '<input type="hidden" id="durations" name="durations" value="">' .
-    '<input type="hidden" id="targets" name="targets" value="">' .
-    '<input type="hidden" id="range" name="range" value="">' .
-    '<input class="button goldButton" type="submit" value="Create Spell">' . 
-    '</section>' . 
-
-    '<section class="prelimCost">' .
-    '<button type="button" class="button goldButton" value="cost">Cost</button>' . 
-    '</section>' . 
-    '</section>' . 
-
-    '<section class="mid">' .
-    '<section class="dropButton">' .
-    '<section class="button blueButton selectCast">Cast Time' .
-    '<section class="dropDown">' .
-    '<button type="button" class="button greyButton castButton" value="instantCast">Instant</button>' . 
-    '<button type="button" class="button greyButton castButton" value="3SecCast">3 Seconds</button>' . 
-    '<button type="button" class="button greyButton castButton" value="6SecCast">6 Seconds</button>' . 
-    '<button type="button" class="button greyButton castButton" value="12SecCast">12 Seconds</button>' . 
-    '<button type="button" class="button greyButton castButton" value="1MinCast">1 Minute</button>' . 
-    '<button type="button" class="button greyButton castButton" value="10MinCast">10 Minutes</button>' . 
-    '<button type="button" class="button greyButton castButton" value="1HrCast">1 Hour</button>' . 
-    '</section>' . 
-    '</section>' . 
-    '</section>' . 
-
-    '<section class="dropButton">' .
-    '<section class="button redButton selectCast">Effect(s)' .
-    '<section class="dropDown">' .
-    '<button type="button" class="button greyButton effectButton" value="damage">Damage</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="healing">Healing</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="mundane">Mundane</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="lesser">Lesser</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="greater">Greater</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="supreme">Supreme</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="wondrous">Wondrous</button>' . 
-    '<button type="button" class="button greyButton effectButton" value="legendary">Legendary</button>' . 
-    '</section>' . 
-    '</section>' . 
-    '</section>' . 
-
-    '<section class="dropButton">' .
-    '<section class="button tealButton selectCast">Durations(s)' .
-    '<section class="dropDown">' .
-    '<button type="button" class="button greyButton durationButton" value="instantDur">Instant</button>' . 
-    '<button type="button" class="button greyButton durationButton" value="30SecDur">30 Seconds</button>' . 
-    '<button type="button" class="button greyButton durationButton" value="1MinDur">1 Minute</button>' . 
-    '<button type="button" class="button greyButton durationButton" value="10MinDur">10 Minutes</button>' . 
-    '<button type="button" class="button greyButton durationButton" value="1HrDur">1 Hour</button>' . 
-    '</section>' . 
-    '</section>' . 
-    '</section>' . 
-
-    '<section class="dropButton">' .
-    '<section class="button greenButton selectCast">Target(s)' .
-    '<section class="dropDown">' .
-    '<button type="button" class="button greyButton targetButton" value="mundane">Single</button>' . 
-    '<button type="button" class="button greyButton targetButton" value="lesser">1-3</button>' . 
-    '<button type="button" class="button greyButton targetButton" value="greater">1-7</button>' . 
-    '<button type="button" class="button greyButton targetButton" value="supreme">5ft Area</button>' . 
-    '<button type="button" class="button greyButton targetButton" value="wondrous">10ft Area</button>' . 
-    '<button type="button" class="button greyButton targetButton" value="legendary">20ft Area</button>' . 
-    '<button type="button" class="button greyButton targetButton" value="legendary">50ft Area</button>' . 
-    '</section>' .
-    '</section>' . 
-    '</section>' . 
-
-    '<section class="dropButton">' .
-    '<section class="button orangeButton selectCast">Range' .
-    '<section class="dropDown">' .
-    '<button type="button" class="button greyButton rangeButton" value="self">Self</button>' . 
-    '<button type="button" class="button greyButton rangeButton" value="melee">Melee</button>' . 
-    '<button type="button" class="button greyButton rangeButton" value="short">Short</button>' . 
-    '<button type="button" class="button greyButton rangeButton" value="medium">Medium</button>' . 
-    '<button type="button" class="button greyButton rangeButton" value="long">Long</button>' . 
-    '</section>' . 
-    '</section>' . 
-    '</section>' . 
-
-    '</section>' . 
-
-    '</section>';
-
-    return $create;
+function buildSpellMessage($name, $desc, $casterType, $cost, $castTime, $effects, $durations,$targets,$range,$multi){
+    $m = '<p class="notify">Please complete the following attributes:<br>';
+            if(empty($name)){
+                $m .= 'Spell Name<br>';
+            }
+            if(empty($desc)){
+                $m .= 'Description<br>';
+            }
+            if(empty($casterType)){
+                $m .= 'Caster Type<br>';
+            }
+            if(empty($cost)){
+                $m .= 'Cost<br>';
+            }
+            if(empty($castTime)){
+                $m .= 'Cast Time<br>';
+            }
+            if(empty($effects)){
+                $m .= 'Effect(s)<br>';
+            }
+            if(empty($durations)){
+                $m .= 'Duration(s)<br>';
+            }
+            if(empty($targets)){
+                $m .= 'Target(s)<br>';
+            }
+            if(empty($range)){
+                $m .= 'Range<br>';
+            }
+            if($effects == "Damage" || $effects == "Healing"){
+                if(empty($multi)){
+                    $m .= 'Multiplier<br>';
+                }
+            }
+            $m .= '</p>';
+            return $m;
 }
-
 ?>
-
